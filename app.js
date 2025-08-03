@@ -8,6 +8,8 @@ const app = express();
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+app.use(express.urlencoded({ extended: false }));
+
 app.get("/", studentsController.getStudents);
 
-app.listen(8000);
+app.listen(process.env.APP_PORT);
