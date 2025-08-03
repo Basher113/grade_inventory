@@ -4,7 +4,7 @@
   "description": "A simple invetory app for practice using database in a node application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node --watch app.js"
   },
   "keywords": [],
   "author": "",
