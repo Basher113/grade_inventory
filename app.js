@@ -8,8 +8,14 @@ const app = express();
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+const staticFiles = path.join(__dirname, "static");
+app.use(express.static(staticFiles));
 app.use(express.urlencoded({ extended: false }));
 
+
 app.get("/", studentsController.getStudents);
+app.post("/new", studentsController.createNewStudentPost);
+app.get("/new", studentsController.createNewStudentGet);
+
 
 app.listen(process.env.APP_PORT);

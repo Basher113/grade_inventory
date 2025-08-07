@@ -1,0 +1,47 @@
+<form class="filter-section" action="/" method="GET">
+            <h3 class="filter-title">Filter Students</h3>
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Search Name</label>
+                    <input type="text" id="searchName" name="search" class="filter-input" placeholder="Search by first or last name" value="<%= query.search %>">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Grade Level</label>
+                    <select id="filterGradeLevel" class="filter-select" name="grade_level">
+                        <option value="">All Grade Levels</option>
+                        <option value="11">Grade 11</option>
+                        <option value="12">Grade 12</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Strand</label>
+                    <select id="filterStrand" class="filter-select" name="strand">
+                        <option value="">All Strands</option>
+                        <%
+                            const options = [ "STEM", "ABM", "HUMMS", "GAS", "TVL"];
+                            
+                            options.forEach((option) =>  { %>
+                                const isSelected = query.strand === option;
+                                <option value="<%= option %>" <%= query.strand===option ? 'selected' : '' %>> <%=option%> </option>
+                            <% }) %>
+                        %>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Grade Range</label>
+                    <select id="filterGradeRange" class="filter-select">
+                        <option value="">All Grades</option>
+                        <option value="90-100">90-100 (Excellent)</option>
+                        <option value="85-89">85-89 (Very Good)</option>
+                        <option value="80-84">80-84 (Good)</option>
+                        <option value="75-79">75-79 (Fair)</option>
+                        <option value="below75">Below 75 (Needs Improvement)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="apply-filter">Apply Filter</button>
+                    <button class="clear-filters" onclick="clearFilters()" type="button">Clear Filters</button>
+                </div>
+            </div>
+        </form>
