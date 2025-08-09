@@ -18,6 +18,12 @@ const getStudents = async (filters=null) => {
         queryParameterValues.push(filters.strand)
         conditions.push(`(strands.strand = $${queryParameterValues.length})`);
       }
+
+      if (filters.grade_average_range) {
+        const averageRange = filters.grade_average_range.split("-");
+        queryParameterValues.push(averageRange[0], averageRange[1]);
+        conditions.push(`(students.grade_average BETWEEN $${queryParameterValues.length - 1} AND $${queryParameterValues.length})`);
+      }
     }
   }
 
@@ -32,7 +38,7 @@ const getStudents = async (filters=null) => {
     ORDER BY id DESC
   `
 
-  
+  console.log(query);
   const {rows} = await pool.query(query, queryParameterValues);
   return rows;
 }

@@ -30,6 +30,15 @@ const getStudents = [
   .optional({ values: "falsy" }).trim().isIn(["11", "12"]).withMessage("Invalid grade level. Grade level must only be 11 or 12"),
   queryValidation("strand")
   .trim().optional({ values: "falsy" }).toUpperCase().isIn(["STEM", "ABM", "TVL", "GAS", "HUMSS"]).withMessage("Invalid strand"),
+  queryValidation("grade_average_range").optional({ values: "falsy" }).trim().isIn([
+    "90-100",
+    "85-89",
+    "80-84",
+    "75-79",
+    "0-74"
+  ])
+  .withMessage("Invalid grade range selected.")
+  ,
   async (req, res) => {
   const errors = validationResult(req);
 
