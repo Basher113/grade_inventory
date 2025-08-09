@@ -9,7 +9,7 @@ const getStudents = [
   queryValidation("grade_level")
   .optional({ values: "falsy" }).trim().isIn(["11", "12"]).withMessage("Invalid grade level. Grade level must only be 11 or 12"),
   queryValidation("strand")
-  .trim().optional({ values: "falsy" }).toUpperCase().isIn(["STEM", "ABM", "TVL", "GAS", "HUMMS"]).withMessage("Invalid strand"),
+  .trim().optional({ values: "falsy" }).toUpperCase().isIn(["STEM", "ABM", "TVL", "GAS", "HUMSS"]).withMessage("Invalid strand"),
   async (req, res) => {
   const errors = validationResult(req);
 
@@ -44,7 +44,7 @@ const createNewStudentPost = [
   .isInt({min: 0, max: 100}).withMessage("grade average must be between 0 and 100"),
   body("strand")
   .trim().notEmpty().withMessage("Student must have a strand")
-  .toUpperCase().isIn(["STEM", "ABM", "TVL", "GAS", "HUMMS"]).withMessage("Invalid strand")
+  .toUpperCase().isIn(["STEM", "ABM", "TVL", "GAS", "HUMSS"]).withMessage("Invalid strand")
   ,
   async (req, res) => {
     const errors = validationResult(req);
@@ -57,6 +57,11 @@ const createNewStudentPost = [
       console.log(errorsPathAndMessage);
       return res.status(400).render("newStudentForm", {errors: errorsPathAndMessage});
     }
+    const {first_name, last_name, grade_level, grade_average, strand} = req.body;
+    const queryText = "INSERT INTO students (first_name, last_name, grade_level, grade_average, strand_id) VALUES ($1, $2, $3, $4, $5)";
+    const strandId = await query.getStrandId(strand);
+    const values = [first_name, last_name, grade_level, grade_average, strandId];
+    await query.insertStudent(queryText, values);
     res.redirect("/")
 }]
 
@@ -64,6 +69,15 @@ const createNewStudentGet = async (req, res) => {
   res.render("newStudentForm");
 }
 
+const deleteStudent = async (req, res) => {
+  const {studentId} = req.params;
+  try {
+    await query.deleteStudent(studentId);
+    res.redirect("/");
+  } catch (error) {
+    return res.render("error")
+  }
+  
+}
 
-
-module.exports = {getStudents, createNewStudentGet, createNewStudentPost}
+module.exports = {getStudents, createNewStudentGet, createNewStudentPost, deleteStudent}

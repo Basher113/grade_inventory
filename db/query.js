@@ -38,4 +38,21 @@ const getStudents = async (filters=null) => {
   return rows;
 }
 
-module.exports = {getStudents};
+const getStrandId = async (strand) => {
+  const {rows} = await pool.query("SELECT id FROM strands WHERE strand = $1", [strand]);
+  return rows[0].id;
+}
+
+const insertStudent = async (queryText, values) => {
+  
+  await pool.query(queryText, values)
+
+}
+
+const deleteStudent = async (studentId) => {
+  await pool.query("DELETE FROM students WHERE id = $1 ", [studentId]);
+
+}
+
+
+module.exports = {getStudents, getStrandId, insertStudent, deleteStudent};

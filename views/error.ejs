@@ -8,9 +8,7 @@
 <body>
   <h1><%= errorStatus %> - Error</h1>
   <ul>
-
-  
-  <% errors.forEach((error) => { %>
+  <% locals.errors.forEach((error) => { %>
     <li style="color: red;"><%= error.msg %></li>
   <%})%>
   </ul>

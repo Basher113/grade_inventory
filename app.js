@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 app.get("/", studentsController.getStudents);
 app.post("/new", studentsController.createNewStudentPost);
 app.get("/new", studentsController.createNewStudentGet);
+app.get("/delete/:studentId", studentsController.deleteStudent)
 
 
 app.listen(process.env.APP_PORT);
