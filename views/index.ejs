@@ -60,7 +60,6 @@
         function openEditModal(studentId) {
             const row = document.getElementById(`row-${studentId}`);
             const cells = row.querySelectorAll('td');
-
             // Populate modal fields
             document.getElementById('edit-id').value = cells[0].textContent.trim();
             document.getElementById('edit-first-name').value = cells[1].textContent.trim();
@@ -78,6 +77,16 @@
 
         function closeEditModal() {
             document.getElementById('editModal').style.display = 'none';
+        }
+
+        function clearFilters() {
+            document.getElementById('searchName').value = '';
+            document.getElementById('filterGradeLevel').value = '';
+            document.getElementById('filterStrand').value = '';
+            document.getElementById('filterGradeRange').value = '';
+            
+            // Here you would trigger the filter function to show all students again
+            applyFilters();
         }
     </script>
 </body>
