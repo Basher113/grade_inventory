@@ -2,32 +2,7 @@ const query = require("../db/query");
 const {capitalizeFirstLetter} = require("../utils/customSanitizer");
 const { query: queryValidation, body, validationResult } = require('express-validator');
 
-const getStudents = [
-  queryValidation("search")
-  .optional({ values: "falsy" }).trim()
-  .isAlpha('en-US', { ignore: ' ' }).withMessage("Search names must only contain letters."),
-  queryValidation("grade_level")
-  .optional({ values: "falsy" }).trim().isIn(["11", "12"]).withMessage("Invalid grade level. Grade level must only be 11 or 12"),
-  queryValidation("strand")
-  .trim().optional({ values: "falsy" }).toUpperCase().isIn(["STEM", "ABM", "TVL", "GAS", "HUMSS"]).withMessage("Invalid strand"),
-  async (req, res) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    console.log(errors);
-    return res.status(400).render("error.ejs", {
-      title: "SHS - Grade Inventory",
-      errors: errors.errors,
-      errorStatus: 400,
-    })
-  }
-  const students = await query.getStudents(req.query);
-  res.locals.query = req.query;
-  
-  res.render("index", {title: "SHS - Grade Inventory", students: students});
-}]
-
-const createNewStudentPost = [
+const validateStudents = [
   body("first_name")
   .trim().notEmpty().withMessage("First name is required")
   .customSanitizer(capitalizeFirstLetter)
@@ -45,7 +20,34 @@ const createNewStudentPost = [
   body("strand")
   .trim().notEmpty().withMessage("Student must have a strand")
   .toUpperCase().isIn(["STEM", "ABM", "TVL", "GAS", "HUMSS"]).withMessage("Invalid strand")
-  ,
+]
+
+const getStudents = [
+  queryValidation("search")
+  .optional({ values: "falsy" }).trim()
+  .isAlpha('en-US', { ignore: ' ' }).withMessage("Search names must only contain letters."),
+  queryValidation("grade_level")
+  .optional({ values: "falsy" }).trim().isIn(["11", "12"]).withMessage("Invalid grade level. Grade level must only be 11 or 12"),
+  queryValidation("strand")
+  .trim().optional({ values: "falsy" }).toUpperCase().isIn(["STEM", "ABM", "TVL", "GAS", "HUMSS"]).withMessage("Invalid strand"),
+  async (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).render("error.ejs", {
+      title: "SHS - Grade Inventory",
+      errors: errors.errors,
+      errorStatus: 400,
+    })
+  }
+  const students = await query.getStudents(req.query);
+  res.locals.query = req.query;
+  
+  res.render("index", {title: "SHS - Grade Inventory", students: students});
+}]
+
+const createNewStudentPost = [
+  validateStudents,
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -54,7 +56,6 @@ const createNewStudentPost = [
         acc[error.path] = error.msg;
         return acc;
       }, {})
-      console.log(errorsPathAndMessage);
       return res.status(400).render("newStudentForm", {errors: errorsPathAndMessage});
     }
     const {first_name, last_name, grade_level, grade_average, strand} = req.body;
@@ -76,8 +77,21 @@ const deleteStudent = async (req, res) => {
     res.redirect("/");
   } catch (error) {
     return res.render("error")
-  }
-  
+  } 
 }
 
-module.exports = {getStudents, createNewStudentGet, createNewStudentPost, deleteStudent}
+const updateStudentPost = [
+  validateStudents,
+  async (req, res) => {
+    const {studentId} = req.params;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).render("error", {title: "SHS - Grade Inventory", errors: errors.errors, errorStatus: 400})
+    }
+    await query.updateStudent(studentId, req.body);
+    res.redirect("/");
+  }
+
+]
+
+module.exports = {getStudents, createNewStudentGet, createNewStudentPost, deleteStudent, updateStudentPost}

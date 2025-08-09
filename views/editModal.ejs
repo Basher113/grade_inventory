@@ -1,0 +1,35 @@
+<div id="editModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <h2>Edit Student</h2>
+        <form id="editStudentForm" method="POST">
+            <input type="hidden" name="id" id="edit-id">
+
+            <label>First Name:</label>
+            <input type="text" name="first_name" id="edit-first-name" required>
+
+            <label>Last Name:</label>
+            <input type="text" name="last_name" id="edit-last-name" required>
+
+            <label>Grade Level:</label>
+            <input type="number" name="grade_level" id="edit-grade-level" min="1" max="12" required>
+
+            <label>Average Grade:</label>
+            <input type="number" name="grade_average" id="edit-grade-average" min="0" max="100" step="1" required>
+
+            <label>Strand:</label>
+            <select name="strand" id="edit-strand" required>
+                <option value="STEM">STEM</option>
+                <option value="HUMSS">HUMSS</option>
+                <option value="ABM">ABM</option>
+                <option value="GAS">GAS</option>
+                <option value="TVL">TVL</option>
+            </select>
+
+            <div class="modal-actions">
+                <button type="submit" class="btn-save">Save</button>
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

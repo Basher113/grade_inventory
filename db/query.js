@@ -5,7 +5,6 @@ const getStudents = async (filters=null) => {
   const queryParameterValues = [];
   
   if (filters) {
-    console.log(filters)
     if (Object.keys(filters).length > 0) {
       if (filters.search) {
         queryParameterValues.push(`%${filters.search}%`);
@@ -30,9 +29,9 @@ const getStudents = async (filters=null) => {
     JOIN strands as strands
     ON students.strand_id = strands.id
     ${whereClause}
+    ORDER BY id DESC
   `
 
-  console.log(query);
   
   const {rows} = await pool.query(query, queryParameterValues);
   return rows;
@@ -51,8 +50,19 @@ const insertStudent = async (queryText, values) => {
 
 const deleteStudent = async (studentId) => {
   await pool.query("DELETE FROM students WHERE id = $1 ", [studentId]);
+}
 
+const updateStudent = async (studentId, formData) => {
+  const {first_name, last_name, grade_level, grade_average, strand} = formData;
+  const strandId = await getStrandId(strand);
+  const queryText = `
+    UPDATE students 
+    SET first_name = $1, last_name = $2, grade_level = $3, grade_average = $4, strand_id = $5
+    WHERE id = $6
+  `
+  const values = [first_name, last_name, parseInt(grade_level), parseInt(grade_average), strandId, parseInt(studentId)];
+  await pool.query(queryText, values);
 }
 
 
-module.exports = {getStudents, getStrandId, insertStudent, deleteStudent};
+module.exports = {getStudents, getStrandId, insertStudent, deleteStudent, updateStudent};

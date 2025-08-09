@@ -33,15 +33,15 @@
                 </thead>
                 <tbody>
                   <% students.forEach((student) => { %>
-                    <tr>
-                    <td><%= student.id %></td>
-                    <td><%= student.first_name %></td>
-                    <td><%= student.last_name %></td>
-                    <td><%= student.grade_level %></td>
-                    <td><%= student.grade_average %></td>
-                    <td><%= student.strand %></td>
+                    <tr id="row-<%= student.id %>">
+                        <td><%= student.id %></td>
+                        <td><%= student.first_name %></td>
+                        <td><%= student.last_name %></td>
+                        <td><%= student.grade_level %></td>
+                        <td><%= student.grade_average %></td>
+                        <td><%= student.strand %></td>
                     <td class="actions">
-                        <button class="btn-edit">Edit</button>
+                        <a class="btn-edit" onclick="openEditModal('<%= student.id %>')">Edit</a>
                         <a class="btn-delete" href="/delete/<%= student.id %>">Delete</a>
                     </td>
                     </tr>
@@ -53,10 +53,32 @@
         <div class="summary" id="summary">
             <!-- Summary will be populated by JavaScript -->
         </div>
+
     </div>
 
     <script>
-        
+        function openEditModal(studentId) {
+            const row = document.getElementById(`row-${studentId}`);
+            const cells = row.querySelectorAll('td');
+
+            // Populate modal fields
+            document.getElementById('edit-id').value = cells[0].textContent.trim();
+            document.getElementById('edit-first-name').value = cells[1].textContent.trim();
+            document.getElementById('edit-last-name').value = cells[2].textContent.trim();
+            document.getElementById('edit-grade-level').value = cells[3].textContent.trim();
+            document.getElementById('edit-grade-average').value = cells[4].textContent.trim();
+            document.getElementById('edit-strand').value = cells[5].textContent.trim();
+
+            // Set form action
+            document.getElementById('editStudentForm').action = `/update/${studentId}`;
+
+            // Show modal
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
     </script>
 </body>
 </html>
